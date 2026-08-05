@@ -16,11 +16,22 @@ The extension owns the compaction hook and emits one summary containing both the
 
 ```bash
 # From this checkout
-pi install /absolute/path/to/pi-mcb
+pi install npm:pi-mcb
 ```
 
 Do **not** load `pi-blackhole`, `pi-observational-memory`, or another compaction extension alongside pi-mcb. They can each register compaction hooks and/or a `recall` tool. pi-mcb warns when it detects one, but cannot safely resolve the conflict for you. Remove them, then restart Pi or run `/reload` from active session.
 
+For updating the extension when a new release is available you can do 
+
+```bash
+pi update npm:pi-mcb
+```
+
+and removing it can be done using 
+
+```bash
+pi remove npm:pi-mcb
+```
 ## Commands
 
 | Command | Purpose |
