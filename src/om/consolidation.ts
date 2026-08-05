@@ -889,6 +889,10 @@ async function runObserverStage(
               );
             }
           } catch (err) {
+            ctx.ui?.notify(
+              `Failed to generate semantic embedding for observations: ${(err as Error).message}`,
+              "warning",
+            );
             console.error(
               `mcb: observer semantic embedding failed: ${(err as Error).message}`,
             );
@@ -1258,6 +1262,10 @@ async function runReflectorStage(
             );
           }
         } catch (err) {
+          ctx.ui?.notify(
+            `Failed to generate semantic embedding for reflections: ${(err as Error).message}`,
+            "warning",
+          );
           console.error(
             `mcb: reflector semantic embedding failed: ${(err as Error).message}`,
           );

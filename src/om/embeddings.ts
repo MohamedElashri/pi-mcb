@@ -63,7 +63,8 @@ export async function embedText(
     console.error(
       `mcb: failed to generate embedding for text: ${(err as Error).message}`,
     );
-    // If embedding fails, return an empty array or throw.
+    // Reset pipeline promise so we can retry later if the user fixes the model or network
+    pipelinePromise = null;
     // We throw so the caller knows it failed and doesn't save a corrupt state.
     throw err;
   }
