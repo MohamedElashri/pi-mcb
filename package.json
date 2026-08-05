@@ -1,0 +1,79 @@
+{
+  "name": "pi-mcb",
+  "version": "0.4.3",
+  "packageManager": "pnpm@11.2.2",
+  "description": "Unified compaction + observational memory extension for Pi — compresses conversation context while preserving durable observations and reflections",
+  "license": "MIT",
+  "author": "Mohamed Elashri",
+  "type": "module",
+  "main": "./dist/index.js",
+  "files": [
+    "dist/",
+    "LICENSE",
+    "README.md",
+    "CONFIG.md",
+    "example-config.json"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "pnpm typecheck && pnpm lint",
+    "prepare": "node scripts/prepare.mjs",
+    "prepack": "pnpm check && pnpm test && pnpm build",
+    "release:check": "pnpm pack --dry-run"
+  },
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "pi",
+    "pi-coding-agent",
+    "pi-agent",
+    "pi-mcb",
+    "mcb",
+    "compact",
+    "compaction",
+    "observational-memory",
+    "recall",
+    "ai",
+    "agents",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MohamedElashri/pi-mcp.git"
+  },
+  "homepage": "https://github.com/MohamedElashri/pi-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/MohamedElashri/pi-mcp/issues"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-agent-core": ">=0.81.1 <1.0.0",
+    "@earendil-works/pi-ai": ">=0.81.1 <1.0.0",
+    "@earendil-works/pi-coding-agent": ">=0.81.1 <1.0.0",
+    "@earendil-works/pi-tui": ">=0.81.1 <1.0.0"
+  },
+  "pi": {
+    "extensions": [
+      "./dist/index.js"
+    ]
+  },
+  "devDependencies": {
+    "@earendil-works/pi-agent-core": "0.83.0",
+    "@earendil-works/pi-ai": "0.83.0",
+    "@earendil-works/pi-coding-agent": "0.83.0",
+    "@earendil-works/pi-tui": "0.83.0",
+    "@typescript-eslint/eslint-plugin": "8.60.0",
+    "@typescript-eslint/parser": "8.60.0",
+    "eslint": "9.39.4",
+    "prettier": "3.9.6",
+    "tsup": "^8.5.1",
+    "typebox": "1.1.38",
+    "typescript": "5.9.3",
+    "vitest": "4.1.9"
+  }
+}
