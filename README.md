@@ -71,7 +71,7 @@ Useful defaults:
 - `compaction`: `auto`, `manual`, or `off`.
 - `compactionEngine`: `mcb` uses the deterministic summary; `pi-default` leaves normal Pi compaction in charge.
 - `memory`: independently enables the Observer/Reflector/Dropper layer.
-- `semanticRecall`: (opt-in) enables local vector embeddings for conceptual memory search.
+- `semanticRecall`: (opt-in) enables local vector embeddings for conceptual memory search (requires manually installing `@huggingface/transformers`).
 - Per-worker model overrides, fallback chains, cooldowns, input budgets, and environment overrides are available in [CONFIG.md](CONFIG.md).
 
 ## Design

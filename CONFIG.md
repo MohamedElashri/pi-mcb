@@ -212,6 +212,11 @@ Controls whether observational memory workers run and whether OM content is inje
 
 When `true`, observational memory workers will generate dense vector embeddings for facts and reflections using a local HuggingFace transformers pipeline. This unlocks the `mode:semantic` search in the `recall` tool, allowing the agent to retrieve memories by conceptual similarity.
 
+**Note:** This feature requires the heavy `@huggingface/transformers` package, which is an optional peer dependency. You must install it manually in your Pi environment to use this feature:
+```bash
+pi install npm:@huggingface/transformers
+```
+
 | Type | Default |
 |------|---------|
 | boolean | `false` |
