@@ -14,8 +14,7 @@ import {
 import type { Message, Model, ModelThinkingLevel } from "@earendil-works/pi-ai";
 import { createBridgeStreamFn } from "../../provider-stream.js";
 import { streamSimple } from "@earendil-works/pi-ai/compat";
-import { Type } from "typebox";
-import type { Static } from "typebox";
+
 import { debugLog } from "../../debug-log.js";
 import { AGENT_LOOP_MAX_TOKENS, boundedMaxTokens } from "../../model-budget.js";
 import {
@@ -71,12 +70,24 @@ const RELEVANCE_DROP_RANK: Record<Observation["relevance"], number> = {
   critical: 3,
 };
 
-const DropObservationsSchema = Type.Object({
-  ids: Type.Array(Type.String({ minLength: 1 }), { minItems: 1 }),
-  reason: Type.Optional(Type.String()),
-});
+const DropObservationsSchema = {
+  type: "object",
+  properties: {
+    ids: {
+      type: "array",
+      items: { type: "string", minLength: 1 },
+      minItems: 1,
+    },
+    reason: { type: "string" },
+  },
+  required: ["ids"],
+  additionalProperties: false,
+} as const;
 
-type DropObservationsArgs = Static<typeof DropObservationsSchema>;
+type DropObservationsArgs = {
+  ids: string[];
+  reason?: string;
+};
 
 function joinOrEmpty(items: string[]): string {
   return items.length ? items.join("\n") : "(none yet)";
@@ -278,13 +289,14 @@ export async function runDropper(
   let duplicateInRequestCount = 0;
   let duplicateInRunCount = 0;
 
-  const dropObservations: AgentTool<typeof DropObservationsSchema> = {
+  const dropObservations: AgentTool<any> = {
     name: "drop_observations",
     label: "Drop observations",
     description:
       "Propose active observation ids that are safe to remove from compacted memory.",
     parameters: DropObservationsSchema,
-    execute: async (_id, params: DropObservationsArgs) => {
+    execute: async (_id, rawParams: any) => {
+      const params = rawParams as DropObservationsArgs;
       toolCallCount++;
       rawRequestedIdsCount += params.ids.length;
       const seenInRequest = new Set<string>();

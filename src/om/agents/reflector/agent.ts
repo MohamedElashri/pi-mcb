@@ -14,8 +14,7 @@ import {
 import type { Message, Model, ModelThinkingLevel } from "@earendil-works/pi-ai";
 import { createBridgeStreamFn } from "../../provider-stream.js";
 import { streamSimple } from "@earendil-works/pi-ai/compat";
-import { Type } from "typebox";
-import type { Static } from "typebox";
+
 import { hashId } from "../../ids.js";
 import { AGENT_LOOP_MAX_TOKENS, boundedMaxTokens } from "../../model-budget.js";
 import { truncateRecordContent } from "../../serialize.js";
@@ -49,19 +48,37 @@ interface RunReflectorArgs {
   thinkingLevel?: ModelThinkingLevel;
 }
 
-const RecordReflectionsSchema = Type.Object({
-  reflections: Type.Array(
-    Type.Object({
-      content: Type.String({ minLength: 1 }),
-      supportingObservationIds: Type.Array(Type.String({ minLength: 1 }), {
-        minItems: 1,
-      }),
-    }),
-    { minItems: 1 },
-  ),
-});
+const RecordReflectionsSchema = {
+  type: "object",
+  properties: {
+    reflections: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          content: { type: "string", minLength: 1 },
+          supportingObservationIds: {
+            type: "array",
+            items: { type: "string", minLength: 1 },
+            minItems: 1,
+          },
+        },
+        required: ["content", "supportingObservationIds"],
+        additionalProperties: false,
+      },
+      minItems: 1,
+    },
+  },
+  required: ["reflections"],
+  additionalProperties: false,
+} as const;
 
-type RecordReflectionsArgs = Static<typeof RecordReflectionsSchema>;
+type RecordReflectionsArgs = {
+  reflections: {
+    content: string;
+    supportingObservationIds: string[];
+  }[];
+};
 
 function joinOrEmpty(items: string[]): string {
   return items.length ? items.join("\n") : "(none yet)";
@@ -110,13 +127,14 @@ export async function runReflector(
   );
   const accumulated = new Map<string, Reflection>();
 
-  const recordReflections: AgentTool<typeof RecordReflectionsSchema> = {
+  const recordReflections: AgentTool<any> = {
     name: "record_reflections",
     label: "Record reflections",
     description:
       "Record new durable reflections with supporting observation ids.",
     parameters: RecordReflectionsSchema,
-    execute: async (_id, params: RecordReflectionsArgs) => {
+    execute: async (_id, rawParams: any) => {
+      const params = rawParams as RecordReflectionsArgs;
       let added = 0;
       let duplicates = 0;
       let rejected = 0;

@@ -4,8 +4,6 @@
  *
  * Created by pi-mcb-om. Replaces pi-mcb's vcc_recall and OM's standalone recall-observation.
  */
-import { Type } from "typebox";
-import { StringEnum } from "@earendil-works/pi-ai";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { loadAllMessages } from "../core/load-messages";
 import {
@@ -335,39 +333,52 @@ export function registerRecallTool(pi: ExtensionAPI): void {
       "Use recall — literal text/regex search across session history and file write/edit content. #N expands an entry; #N:path with optional :offset:limit or :full drills down into file content; 12-char hex ids recover observation/reflection sources. mode:file for file-content-only, mode:touched for aggregated files-by-path. scope:'all' to search the full session. If no results, try fewer terms or a regex pattern.",
       "Use recall — when a drill-down path matches multiple files, options are listed. Narrow with a more specific path substring. Only full-file writes are indexed for text search (edit diffs are not).",
     ],
-    parameters: Type.Object({
-      query: Type.Optional(
-        Type.String({
+    parameters: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
           description:
             "Text/regex search; #N expands entry; #N:path drills file (#N:file auto-selects); #N:path:full all lines; #N:path:offset:limit range; 12-char hex for observations. Only full-file writes indexed.",
-        }),
-      ),
-      expand: Type.Optional(
-        Type.Array(Type.Number(), {
+        },
+        expand: {
+          type: "array",
+          items: { type: "number" },
           description:
             "Entry indices to return full untruncated content for. Standalone or with query.",
-        }),
-      ),
-      page: Type.Optional(
-        Type.Number({
-          description:
-            "Page number (1-based) for paginated results. Default: 1.",
-        }),
-      ),
-      scope: Type.Optional(
-        StringEnum(["lineage", "all"] as const, {
+        },
+        page: {
+          type: "number",
+          description: "Page number (1-based) for paginated results. Default: 1.",
+        },
+        scope: {
+          type: "string",
+          enum: ["lineage", "all"],
           description:
             "Search scope. lineage = active lineage (default), all = entire session.",
-        }),
-      ),
-      mode: Type.Optional(
-        StringEnum(["hybrid", "file", "touched"] as const, {
+        },
+        mode: {
+          type: "string",
+          enum: ["hybrid", "file", "touched"],
           description:
             "What content to search. hybrid (default) = all session content. file = file content only. touched = files-by-path summary with entry indices.",
-        }),
-      ),
-    }),
-    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+        },
+      },
+      additionalProperties: false,
+    } as any,
+    async execute(
+      _toolCallId,
+      params: {
+        query?: string;
+        expand?: number[];
+        page?: number;
+        scope?: "lineage" | "all";
+        mode?: "hybrid" | "file" | "touched";
+      },
+      _signal,
+      _onUpdate,
+      ctx
+    ) {
       const q = params.query?.trim();
       // Dispatch by format
       if (q && parseDrillDown(q)) {

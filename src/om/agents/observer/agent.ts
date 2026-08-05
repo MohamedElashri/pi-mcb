@@ -15,8 +15,7 @@ import {
 import type { Message, Model, ModelThinkingLevel } from "@earendil-works/pi-ai";
 import { createBridgeStreamFn } from "../../provider-stream.js";
 import { streamSimple } from "@earendil-works/pi-ai/compat";
-import { Type } from "typebox";
-import type { Static } from "typebox";
+
 import { hashId } from "../../ids.js";
 import { AGENT_LOOP_MAX_TOKENS, boundedMaxTokens } from "../../model-budget.js";
 import { OBSERVER_SYSTEM } from "./prompts.js";
@@ -42,44 +41,60 @@ interface RunObserverArgs {
   thinkingLevel?: ModelThinkingLevel;
 }
 
-const RelevanceSchema = Type.Union([
-  Type.Literal("low"),
-  Type.Literal("medium"),
-  Type.Literal("high"),
-  Type.Literal("critical"),
-]);
-
 export const OBSERVATION_TIMESTAMP_PATTERN =
   "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$";
 
-const RecordObservationsSchema = Type.Object({
-  observations: Type.Array(
-    Type.Object({
-      timestamp: Type.String({
-        pattern: OBSERVATION_TIMESTAMP_PATTERN,
-        description: "Observation time in local 'YYYY-MM-DD HH:MM' format.",
-      }),
-      content: Type.String({
-        minLength: 1,
-        description:
-          "Single-line plain prose. No markdown, no tags, no embedded timestamp.",
-      }),
-      relevance: RelevanceSchema,
-      sourceEntryIds: Type.Array(Type.String({ minLength: 1 }), {
-        minItems: 1,
-        description:
-          "Exact source entry ids from the chunk that directly support this observation. " +
-          "Use only ids shown in '[Source entry id: ...]' labels; never invent ids.",
-      }),
-    }),
-    {
+const RecordObservationsSchema = {
+  type: "object",
+  properties: {
+    observations: {
+      type: "array",
       description:
         "Batch of new observations. May be empty only if the tool is not called at all.",
+      items: {
+        type: "object",
+        properties: {
+          timestamp: {
+            type: "string",
+            pattern: OBSERVATION_TIMESTAMP_PATTERN,
+            description: "Observation time in local 'YYYY-MM-DD HH:MM' format.",
+          },
+          content: {
+            type: "string",
+            minLength: 1,
+            description:
+              "Single-line plain prose. No markdown, no tags, no embedded timestamp.",
+          },
+          relevance: {
+            type: "string",
+            enum: ["low", "medium", "high", "critical"],
+          },
+          sourceEntryIds: {
+            type: "array",
+            items: { type: "string", minLength: 1 },
+            minItems: 1,
+            description:
+              "Exact source entry ids from the chunk that directly support this observation. " +
+              "Use only ids shown in '[Source entry id: ...]' labels; never invent ids.",
+          },
+        },
+        required: ["timestamp", "content", "relevance", "sourceEntryIds"],
+        additionalProperties: false,
+      },
     },
-  ),
-});
+  },
+  required: ["observations"],
+  additionalProperties: false,
+} as const;
 
-type RecordObservationsArgs = Static<typeof RecordObservationsSchema>;
+type RecordObservationsArgs = {
+  observations: {
+    timestamp: string;
+    content: string;
+    relevance: "low" | "medium" | "high" | "critical";
+    sourceEntryIds: string[];
+  }[];
+};
 
 function joinOrEmpty(items: string[]): string {
   return items.length ? items.join("\n") : "(none yet)";
@@ -147,7 +162,7 @@ export async function runObserver(
   let totalRejected = 0;
   let totalProposed = 0;
 
-  const recordObservations: AgentTool<typeof RecordObservationsSchema> = {
+  const recordObservations: AgentTool<any> = {
     name: "record_observations",
     label: "Record observations",
     description:
@@ -155,7 +170,8 @@ export async function runObserver(
       "Call this multiple times as you work through the chunk. Stop calling when coverage is complete, " +
       "then emit a short plain-text confirmation to end the run.",
     parameters: RecordObservationsSchema,
-    execute: async (_id, params: RecordObservationsArgs) => {
+    execute: async (_id, rawParams: any) => {
+      const params = rawParams as RecordObservationsArgs;
       toolCalled = true;
       let added = 0;
       let duplicates = 0;
