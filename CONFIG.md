@@ -27,6 +27,8 @@ The config file must contain **valid JSON**. A trailing comma, partial write, or
 
   // ── Observational Memory ──
   "memory": true,                 // Enable OM workers + content injection
+  "semanticRecall": false,        // (Opt-in) Generate vector embeddings for semantic recall
+  "embeddingModel": "Xenova/bge-small-en-v1.5", // HuggingFace model for semantic embeddings
   "sessionFallback": true,        // Fall back to session model when OM models fail
   "fullFoldAlways": true,         // Treat first compaction as full-fold boundary
   "observeAfterTokens": 15000,    // Token threshold for observer runs
@@ -206,6 +208,22 @@ Controls whether observational memory workers run and whether OM content is inje
 { "memory": false, "compaction": "auto", "compactionEngine": "mcb" }
 ```
 
+### `semanticRecall`
+
+When `true`, observational memory workers will generate dense vector embeddings for facts and reflections using a local HuggingFace transformers pipeline. This unlocks the `mode:semantic` search in the `recall` tool, allowing the agent to retrieve memories by conceptual similarity.
+
+| Type | Default |
+|------|---------|
+| boolean | `false` |
+
+### `embeddingModel`
+
+The HuggingFace model string used for local vector generation when `semanticRecall` is enabled. It will be cached locally inside the agent directory and does not require an external API key.
+
+| Type | Default |
+|------|---------|
+| string | `"Xenova/bge-small-en-v1.5"` |
+
 ### `sessionFallback`
 
 When `false`, skip the session-model fallback when all OM model candidates are exhausted. The stage is skipped entirely instead of falling back to the main coding model.
@@ -310,7 +328,9 @@ Shared turn cap for background memory agents. It is passed as `maxTurns` to `run
 
 ## Model Configuration
 
-Model overrides are **first-class config keys**, not "unknown keys". They are fully parsed and validated by `loadUnifiedConfig()` and are **only editable via direct file edit** (the `/mcb configure` overlay preserves them but does not surface them).
+Model overrides are **first-class config keys**, not "unknown keys". They are fully parsed and validated by `loadUnifiedConfig()`.
+
+You can now easily configure your `base`, `observer`, `reflector`, and `dropper` models directly in the interactive **Settings Overlay** (`/mcb settings`). Alternatively, you can edit the JSON file manually (e.g., for configuring complex fallback arrays).
 
 ### Primary models
 
@@ -407,6 +427,7 @@ Boolean fields:
 | Variable | Overrides |
 |----------|-----------|
 | `PI_MCB_MEMORY` | `memory` |
+| `PI_MCB_SEMANTIC_RECALL` | `semanticRecall` |
 | `PI_MCB_DEBUG` | `debug` (debug snapshots) |
 | `PI_MCB_DEBUG_LOG` | `debugLog` (JSONL logging) |
 | `PI_MCB_SESSION_FALLBACK` | `sessionFallback` |
@@ -439,6 +460,7 @@ Float field (must be in `(0, 1]`):
 | Variable | Purpose |
 |----------|---------|
 | `PI_CODING_AGENT_DIR` | Overrides the pi agent data directory (config lives at `<dir>/pi-mcb/pi-mcb-config.json`) |
+| `PI_MCB_EMBEDDING_MODEL` | `embeddingModel` string override |
 | `PI_MCB_COMPACT_INSTRUCTION` | Internal sentinel for the pi-default compaction engine — not a user override |
 
 ## Complete Examples

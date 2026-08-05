@@ -42,7 +42,7 @@ pi remove npm:pi-mcb
 | `/mcb-memory [view|full] [page:N] [copy]` | Show pipeline status or inspect paginated visible/full memory; copying is explicit. |
 | `/mcb-recall <query> [send]` | Search history locally. Append `send` only when results should enter agent context and trigger a turn. |
 
-The agent-facing `recall` tool accepts a memory id, `#N` entry expansion, `#N:path` file drill-down, plain text/regex search, `mode:file`, `mode:touched`, and `scope:all`.
+The agent-facing `recall` tool accepts a memory id, `#N` entry expansion, `#N:path` file drill-down, plain text/regex search, `mode:file`, `mode:touched`, `mode:semantic` (via local dense vector embeddings), and `scope:all`.
 
 ## Configuration
 
