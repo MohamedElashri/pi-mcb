@@ -1,6 +1,6 @@
 {
   "name": "pi-mcb",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "packageManager": "pnpm@11.2.2",
   "description": "Unified compaction + observational memory extension for Pi — compresses conversation context while preserving durable observations and reflections",
   "license": "MIT",
