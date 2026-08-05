@@ -79,23 +79,6 @@ Compaction itself never calls a model. Memory workers run before compaction, whe
 
 Manual mode stores pending worker results per session and flushes them when `/mcb` is run.
 
-## Release checks
-
-Before publishing, run the automated package gate:
-
-```bash
-pnpm release:check
-```
-
-Then manually test the tarball in a clean Pi session:
-
-```bash
-pnpm pack
-pi install ./pi-mcb-<version>.tgz
-pi
-```
-
-Verify `/mcb status`, `/mcb settings`, `/mcb-memory`, `/mcb-recall test`, and one `/mcb` compaction. Remove the generated `.tgz` after testing. Confirm `git status` contains only intended files and that `pnpm pack --dry-run` lists only `dist/`, the license, documentation, and the example config.
 
 ## Credits and license
 
