@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.4] - Unreleased
+## [0.1.5] - 2026-08-06
+
+### Changed
+- Moved `@huggingface/transformers` to an optional peer dependency. This removes heavy C++ binaries (`onnxruntime-node`) and audit vulnerabilities from the default installation. Users who enable `semanticRecall` must now install this package manually.
+
+## [0.1.4] - 2026-08-05
 
 ### Fixed
 - Fixed a bug where the Pi onboarding preset screen would be invoked every time Pi started, rather than just on the first run.
