@@ -45,11 +45,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MohamedElashri/pi-mcp.git"
+    "url": "git+https://github.com/MohamedElashri/pi-mcb.git"
   },
-  "homepage": "https://github.com/MohamedElashri/pi-mcp#readme",
+  "homepage": "https://github.com/MohamedElashri/pi-mcb#readme",
   "bugs": {
-    "url": "https://github.com/MohamedElashri/pi-mcp/issues"
+    "url": "https://github.com/MohamedElashri/pi-mcb/issues"
   },
   "peerDependencies": {
     "@earendil-works/pi-agent-core": ">=0.81.1 <1.0.0",

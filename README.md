@@ -2,7 +2,7 @@
 
 **Memory + Compaction Bridge for Pi.**
 
-Source: [MohamedElashri/pi-mcp](https://github.com/MohamedElashri/pi-mcp)
+Source: [MohamedElashri/pi-mcb](https://github.com/MohamedElashri/pi-mcb)
 
 `pi-mcb` combines two complementary long-session features behind one compaction hook:
 
