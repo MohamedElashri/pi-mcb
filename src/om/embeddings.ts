@@ -23,7 +23,20 @@ async function getPipeline(model: string): Promise<any> {
   pipelinePromise = (async () => {
     // Dynamic import so @huggingface/transformers isn't loaded into memory
     // unless semantic recall is used.
-    const { pipeline, env } = await import("@huggingface/transformers");
+    let hf;
+    try {
+      hf = await import("@huggingface/transformers");
+    } catch (err: any) {
+      if (err.code === "ERR_MODULE_NOT_FOUND") {
+        throw new Error(
+          "Semantic recall requires the @huggingface/transformers package. " +
+            "Please install it manually by running: pi install npm:@huggingface/transformers"
+        );
+      }
+      throw err;
+    }
+
+    const { pipeline, env } = hf;
 
     // Configure local cache directory to stay within the Pi agent's domain
     const cacheDir = join(getAgentDir(), "pi-mcb", ".cache", "transformers");

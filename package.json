@@ -52,10 +52,7 @@
     "url": "https://github.com/MohamedElashri/pi-mcb/issues"
   },
   "peerDependencies": {
-    "@earendil-works/pi-agent-core": "*",
-    "@earendil-works/pi-ai": "*",
-    "@earendil-works/pi-coding-agent": "*",
-    "@earendil-works/pi-tui": "*"
+    "@huggingface/transformers": "^4.2.0"
   },
   "pi": {
     "extensions": [
@@ -67,6 +64,7 @@
     "@earendil-works/pi-ai": "^0.83.0",
     "@earendil-works/pi-coding-agent": "^0.83.0",
     "@earendil-works/pi-tui": "^0.83.0",
+    "@huggingface/transformers": "^4.2.0",
     "@typescript-eslint/eslint-plugin": "8.66.0",
     "@typescript-eslint/parser": "8.66.0",
     "eslint": "10.8.0",
@@ -75,7 +73,9 @@
     "typescript": "5.9.3",
     "vitest": "4.1.10"
   },
-  "dependencies": {
-    "@huggingface/transformers": "^4.2.0"
+  "peerDependenciesMeta": {
+    "@huggingface/transformers": {
+      "optional": true
+    }
   }
 }

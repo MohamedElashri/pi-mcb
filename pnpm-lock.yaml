@@ -11,10 +11,6 @@ overrides:
 importers:
 
   .:
-    dependencies:
-      '@huggingface/transformers':
-        specifier: ^4.2.0
-        version: 4.2.0
     devDependencies:
       '@earendil-works/pi-agent-core':
         specifier: ^0.83.0
@@ -28,6 +24,9 @@ importers:
       '@earendil-works/pi-tui':
         specifier: ^0.83.0
         version: 0.83.0
+      '@huggingface/transformers':
+        specifier: ^4.2.0
+        version: 4.2.0
       '@typescript-eslint/eslint-plugin':
         specifier: 8.66.0
         version: 8.66.0(@typescript-eslint/parser@8.66.0(eslint@10.8.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.8.0(jiti@2.7.0))(typescript@5.9.3)
