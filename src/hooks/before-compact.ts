@@ -8,8 +8,9 @@
  * - This is the single joining point between pi-mcb and OM.
  */
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { convertToLlm } from "@earendil-works/pi-coding-agent";
-import { writeFileSync } from "fs";
+import { convertToLlm, getAgentDir } from "@earendil-works/pi-coding-agent";
+import { writeFileSync, mkdirSync } from "node:fs";
+import { join, dirname } from "node:path";
 import { compile } from "../core/summarize";
 import type { McbCompactionDetails } from "../details";
 import {
@@ -86,7 +87,9 @@ export const formatCompactionStats = (stats: CompactionStats): string => {
 const dbg = (debug: boolean, data: Record<string, unknown>) => {
   if (!debug) return;
   try {
-    writeFileSync("/tmp/pi-mcb-debug.json", JSON.stringify(data, null, 2));
+    const debugPath = join(getAgentDir(), "pi-mcb", "debug.json");
+    mkdirSync(dirname(debugPath), { recursive: true });
+    writeFileSync(debugPath, JSON.stringify(data, null, 2));
   } catch {}
 };
 

@@ -23,10 +23,11 @@ import {
   registerBeforeCompactHook,
   PI_MCB_COMPACT_INSTRUCTION,
 } from "../src/hooks/before-compact.js";
+import { getAgentDir } from "@earendil-works/pi-coding-agent";
 
 let tmpDir: string;
 let CONFIG_PATH: string;
-const DEBUG_PATH = "/tmp/pi-mcb-debug.json";
+const DEBUG_PATH = join(getAgentDir(), "pi-mcb", "debug.json");
 
 beforeAll(() => {
   tmpDir = mkdtempSync(join(tmpdir(), "pi-mcb-test-"));
