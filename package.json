@@ -77,11 +77,5 @@
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "onnxruntime-node",
-      "sharp"
-    ]
   }
 }
