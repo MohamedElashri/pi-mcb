@@ -324,6 +324,8 @@ function parseConfig(raw: Record<string, unknown>): Partial<UnifiedConfig> {
   if (typeof raw.fullFoldAlways === "boolean")
     c.fullFoldAlways = raw.fullFoldAlways;
   if (typeof raw.debugLog === "boolean") c.debugLog = raw.debugLog;
+  if (typeof raw.onboardingSeen === "boolean")
+    c.onboardingSeen = raw.onboardingSeen;
 
   // Numeric fields — use nonNegativeInt for observerPreambleMaxTokens (0 = auto)
   const numKeys = [
