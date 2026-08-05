@@ -1,6 +1,6 @@
 # pi-mcb
 
-`pi-mcb` is an extension for the Pi AI coding agent. **MCB** stands for **Memory and Compaction Bridge**. The extension acts as a unified bridge between two distinct processes: deterministic context compaction (which trims conversation history) and observational memory (which retains durable facts and reflections). By bridging these together, it ensures the agent maintains long-term memory while keeping active context windows fast and lean.
+**pi-mcb** is an extension for the Pi AI coding agent. **MCB** stands for **Memory and Compaction Bridge**. The extension acts as a unified bridge between two distinct processes: deterministic context compaction (which trims conversation history) and observational memory (which retains durable facts and reflections). By bridging these together, it ensures the agent maintains long-term memory while keeping active context windows fast and lean.
 
 `pi-mcb` combines two complementary long-session features behind one compaction hook:
 
@@ -71,6 +71,7 @@ Useful defaults:
 - `compaction`: `auto`, `manual`, or `off`.
 - `compactionEngine`: `mcb` uses the deterministic summary; `pi-default` leaves normal Pi compaction in charge.
 - `memory`: independently enables the Observer/Reflector/Dropper layer.
+- `semanticRecall`: (opt-in) enables local vector embeddings for conceptual memory search.
 - Per-worker model overrides, fallback chains, cooldowns, input budgets, and environment overrides are available in [CONFIG.md](CONFIG.md).
 
 ## Design
@@ -80,6 +81,6 @@ Compaction itself never calls a model. Memory workers run before compaction, whe
 Manual mode stores pending worker results per session and flushes them when `/mcb` is run.
 
 
-## Credits and license
+## Credits and License
 
 This project is a renamed, independently packaged derivative of [pi-blackhole](https://github.com/k0valik/pi-blackhole), which already unified [pi-vcc](https://github.com/sting8k/pi-vcc) and [pi-observational-memory](https://github.com/elpapi42/pi-observational-memory). Their MIT-licensed work provides the compaction, observational-memory, and recall foundations. See `LICENSE`.

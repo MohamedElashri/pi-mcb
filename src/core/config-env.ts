@@ -83,6 +83,7 @@ export function applyEnvOverrides<T extends object>(
 export const DECLARATIVE_ENV_OVERRIDES: Record<string, EnvOverride> = {
   // Booleans
   memory: "PI_MCB_MEMORY",
+  semanticRecall: "PI_MCB_SEMANTIC_RECALL",
   debug: "PI_MCB_DEBUG",
   debugLog: "PI_MCB_DEBUG_LOG",
   sessionFallback: "PI_MCB_SESSION_FALLBACK",
@@ -113,5 +114,10 @@ export const DECLARATIVE_ENV_OVERRIDES: Record<string, EnvOverride> = {
       const n = Number.parseFloat(raw);
       return Number.isFinite(n) && n > 0 && n <= 1 ? n : undefined;
     },
+  },
+  // Strings
+  embeddingModel: {
+    var: "PI_MCB_EMBEDDING_MODEL",
+    parse: (raw: string) => raw.trim() || undefined,
   },
 };
