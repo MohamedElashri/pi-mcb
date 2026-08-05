@@ -52,6 +52,8 @@ On first interactive load, pi-mcb offers safe presets (recommended Pi-visible ta
 ~/.pi/agent/pi-mcb/pi-mcb-config.json
 ```
 
+You can easily edit most of these configuration options—including your `base`, `observer`, `reflector`, and `dropper` model strings—directly inside Pi using the interactive **TUI Settings Menu** by running `/mcb settings`.
+
 Useful defaults:
 
 ```json
