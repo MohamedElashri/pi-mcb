@@ -1,8 +1,6 @@
 # pi-mcb
 
-**Memory + Compaction Bridge for Pi.**
-
-Source: [MohamedElashri/pi-mcb](https://github.com/MohamedElashri/pi-mcb)
+`pi-mcb` is an extension for the Pi AI coding agent. **MCB** stands for **Memory and Compaction Bridge**. The extension acts as a unified bridge between two distinct processes: deterministic context compaction (which trims conversation history) and observational memory (which retains durable facts and reflections). By bridging these together, it ensures the agent maintains long-term memory while keeping active context windows fast and lean.
 
 `pi-mcb` combines two complementary long-session features behind one compaction hook:
 
