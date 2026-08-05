@@ -182,6 +182,11 @@ export const DEFAULTS: UnifiedConfig = {
   debug: false,
   sessionFallback: true,
 
+  model: undefined,
+  observerModel: undefined,
+  reflectorModel: undefined,
+  dropperModel: undefined,
+
   // New config surface
   compaction: "auto",
   compactionEngine: "mcb",
