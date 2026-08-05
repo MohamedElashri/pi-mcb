@@ -35,6 +35,7 @@ export type Observation = {
   relevance: Relevance;
   sourceEntryIds: string[];
   tokenCount: number;
+  vector?: number[];
 };
 
 export type Reflection = {
@@ -42,6 +43,7 @@ export type Reflection = {
   content: string;
   supportingObservationIds: string[];
   tokenCount: number;
+  vector?: number[];
 };
 
 export type ObservationsRecordedEntryData = {
@@ -109,7 +111,10 @@ export function isObservation(value: unknown): value is Observation {
     isNonEmptyString(value.timestamp) &&
     isRelevance(value.relevance) &&
     isNonEmptyStringArray(value.sourceEntryIds) &&
-    isTokenCount(value.tokenCount)
+    isTokenCount(value.tokenCount) &&
+    (value.vector === undefined ||
+      (Array.isArray(value.vector) &&
+        value.vector.every((n) => typeof n === "number")))
   );
 }
 
@@ -120,7 +125,10 @@ export function isReflection(value: unknown): value is Reflection {
     isNonEmptyString(value.content) &&
     !/\r|\n/.test(value.content) &&
     isNonEmptyStringArray(value.supportingObservationIds) &&
-    isTokenCount(value.tokenCount)
+    isTokenCount(value.tokenCount) &&
+    (value.vector === undefined ||
+      (Array.isArray(value.vector) &&
+        value.vector.every((n) => typeof n === "number")))
   );
 }
 

@@ -20,7 +20,11 @@ import {
   normalizeRecallMode,
 } from "../core/recall-scope";
 import { parseDrillDown, expandEntryFile } from "../core/drill-down.js";
-import { recallMemorySources, type Entry } from "../om/ledger/recall.js";
+import {
+  recallMemorySources,
+  foldLedger,
+  type Entry,
+} from "../om/ledger/index.js";
 import { renderRecallSourceEntries } from "../om/serialize.js";
 import {
   findObservationsForEntryIds,
@@ -318,6 +322,121 @@ async function omRecall(memoryId: string, ctx: any) {
   return { content: [{ type: "text" as const, text }], details: undefined };
 }
 
+// ── Semantic OM recall logic ──────────────────────────────────────────────
+
+async function semanticOmRecall(query: string, ctx: any) {
+  const branchEntries = ctx.sessionManager.getBranch() as Entry[];
+  const memory = foldLedger(branchEntries);
+
+  const { loadUnifiedConfig } = await import("../core/unified-config.js");
+  const config = loadUnifiedConfig(process.cwd());
+
+  if (!config.semanticRecall) {
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: "Semantic recall is disabled in settings. Enable it via `/mcb settings`.",
+        },
+      ],
+      details: undefined,
+    };
+  }
+
+  let embedText, cosineSimilarity;
+  try {
+    const emb = await import("../om/embeddings.js");
+    embedText = emb.embedText;
+    cosineSimilarity = emb.cosineSimilarity;
+  } catch (err) {
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: "Failed to load embeddings module: " + (err as Error).message,
+        },
+      ],
+      details: undefined,
+    };
+  }
+
+  const queryVector = await embedText(query, config.embeddingModel);
+
+  const scoredItems = [];
+  for (const obs of memory.observations) {
+    if (obs.vector) {
+      const score = cosineSimilarity(queryVector, obs.vector);
+      scoredItems.push({ item: obs, type: "observation", score });
+    }
+  }
+  for (const ref of memory.reflections) {
+    if (ref.vector) {
+      const score = cosineSimilarity(queryVector, ref.vector);
+      scoredItems.push({ item: ref, type: "reflection", score });
+    }
+  }
+
+  scoredItems.sort((a, b) => b.score - a.score);
+  const topItems = scoredItems.slice(0, 10);
+
+  if (topItems.length === 0) {
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: "No semantically matching memories found (or no vectors generated yet).",
+        },
+      ],
+      details: undefined,
+    };
+  }
+
+  const lines: string[] = [`Top semantic matches for "${query}":\n`];
+  const sourceEntryIds = new Set<string>();
+
+  for (const { item, type, score } of topItems) {
+    const scoreFmt = (score * 100).toFixed(1) + "%";
+    if (type === "reflection") {
+      lines.push(`[${item.id}] (Score: ${scoreFmt}) ${item.content}`);
+    } else {
+      lines.push(
+        `[${item.id}] (Score: ${scoreFmt}) ${(item as any).timestamp} [${(item as any).relevance}] ${item.content}`,
+      );
+      for (const id of (item as any).sourceEntryIds) sourceEntryIds.add(id);
+    }
+  }
+
+  if (sourceEntryIds.size > 0) {
+    lines.push("\nSources:");
+    try {
+      const sessionFile = ctx.sessionManager.getSessionFile();
+      if (sessionFile) {
+        const { rendered } = await Promise.resolve(
+          loadAllMessages(sessionFile, false),
+        );
+        const idToIndex = buildIndexMap(rendered);
+        const indexAnnotation = formatEntryIndexAnnotation(
+          Array.from(sourceEntryIds),
+          idToIndex,
+        );
+        if (indexAnnotation) lines.push(indexAnnotation);
+      }
+    } catch {
+      /* ignore */
+    }
+
+    const allSourceEntries = branchEntries.filter((e) =>
+      sourceEntryIds.has(e.id),
+    );
+    lines.push(renderRecallSourceEntries(allSourceEntries));
+  }
+
+  return {
+    content: [{ type: "text" as const, text: lines.join("\n") }],
+    details: undefined,
+  };
+}
+
 // ── Unified recall tool ──────────────────────────────────────────────────
 
 export function registerRecallTool(pi: ExtensionAPI): void {
@@ -349,7 +468,8 @@ export function registerRecallTool(pi: ExtensionAPI): void {
         },
         page: {
           type: "number",
-          description: "Page number (1-based) for paginated results. Default: 1.",
+          description:
+            "Page number (1-based) for paginated results. Default: 1.",
         },
         scope: {
           type: "string",
@@ -359,9 +479,9 @@ export function registerRecallTool(pi: ExtensionAPI): void {
         },
         mode: {
           type: "string",
-          enum: ["hybrid", "file", "touched"],
+          enum: ["hybrid", "file", "touched", "semantic"],
           description:
-            "What content to search. hybrid (default) = all session content. file = file content only. touched = files-by-path summary with entry indices.",
+            "What content to search. hybrid (default) = all session content. file = file content only. touched = files-by-path summary with entry indices. semantic = semantic embedding search over OM.",
         },
       },
       additionalProperties: false,
@@ -373,11 +493,11 @@ export function registerRecallTool(pi: ExtensionAPI): void {
         expand?: number[];
         page?: number;
         scope?: "lineage" | "all";
-        mode?: "hybrid" | "file" | "touched";
+        mode?: "hybrid" | "file" | "touched" | "semantic";
       },
       _signal,
       _onUpdate,
-      ctx
+      ctx,
     ) {
       const q = params.query?.trim();
       // Dispatch by format
@@ -415,6 +535,9 @@ export function registerRecallTool(pi: ExtensionAPI): void {
       }
       if (q && MEMORY_ID_PATTERN.test(q)) {
         return omRecall(q, ctx);
+      }
+      if (params.mode === "semantic" && q) {
+        return semanticOmRecall(q, ctx);
       }
       // Default: pi-mcb search
       return vccRecall(params, ctx);

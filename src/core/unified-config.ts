@@ -166,6 +166,10 @@ export interface UnifiedConfig {
   passive?: boolean;
   /** Enables observational memory (workers + content injection). Set to false for pi-mcb only. */
   memory: boolean;
+  /** Enables semantic memory retrieval using local embeddings. */
+  semanticRecall: boolean;
+  /** The Hugging Face model ID to use for semantic embeddings. */
+  embeddingModel: string;
   /** Writes debug JSONL to agent directory. */
   debugLog: boolean;
   /** Whether the interactive first-run setup has been completed. */
@@ -199,6 +203,8 @@ export const DEFAULTS: UnifiedConfig = {
   agentMaxTurns: 16,
 
   memory: true,
+  semanticRecall: false,
+  embeddingModel: "Xenova/bge-small-en-v1.5",
   debugLog: false,
   onboardingSeen: false,
 };
@@ -311,6 +317,10 @@ function parseConfig(raw: Record<string, unknown>): Partial<UnifiedConfig> {
     c.noAutoCompact = raw.noAutoCompact;
   if (typeof raw.passive === "boolean") c.passive = raw.passive;
   if (typeof raw.memory === "boolean") c.memory = raw.memory;
+  if (typeof raw.semanticRecall === "boolean")
+    c.semanticRecall = raw.semanticRecall;
+  if (typeof raw.embeddingModel === "string")
+    c.embeddingModel = raw.embeddingModel;
   if (typeof raw.fullFoldAlways === "boolean")
     c.fullFoldAlways = raw.fullFoldAlways;
   if (typeof raw.debugLog === "boolean") c.debugLog = raw.debugLog;

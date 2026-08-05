@@ -879,6 +879,21 @@ async function runObserverStage(
       });
 
       if (result.observations && result.observations.length > 0) {
+        if (runtime.config.semanticRecall && runtime.config.embeddingModel) {
+          try {
+            const { embedText } = await import("./embeddings.js");
+            for (const obs of result.observations) {
+              obs.vector = await embedText(
+                obs.content,
+                runtime.config.embeddingModel,
+              );
+            }
+          } catch (err) {
+            console.error(
+              `mcb: observer semantic embedding failed: ${(err as Error).message}`,
+            );
+          }
+        }
         const data = buildObservationsRecordedData(
           result.observations,
           coversUpToId,
@@ -1231,6 +1246,22 @@ async function runReflectorStage(
           "empty",
         );
         return { outcome: "continue", sameRunReflections: [] };
+      }
+
+      if (runtime.config.semanticRecall && runtime.config.embeddingModel) {
+        try {
+          const { embedText } = await import("./embeddings.js");
+          for (const ref of reflections) {
+            ref.vector = await embedText(
+              ref.content,
+              runtime.config.embeddingModel,
+            );
+          }
+        } catch (err) {
+          console.error(
+            `mcb: reflector semantic embedding failed: ${(err as Error).message}`,
+          );
+        }
       }
 
       const data = buildReflectionsRecordedData(

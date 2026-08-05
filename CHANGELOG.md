@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.3] - Unreleased
 
+### Added 
+- Implement Semantic Memory Retrieval using a local embedding model. This use `Transformers` JS library.
+
+
 ### Security
 - Fixed a CWE-377 (Insecure Temporary File) vulnerability in `before-compact` hook by moving `pi-mcb-debug.json` from the shared `/tmp` directory to the user's secure agent directory (`~/.pi/agent/pi-mcb/debug.json`).
 

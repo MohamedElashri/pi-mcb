@@ -128,6 +128,82 @@ export const config = new ConfigManager<UnifiedConfig>({
       },
     },
     {
+      key: "semanticRecall",
+      type: "boolean",
+      label: "Semantic memory recall",
+      description:
+        "Use local embeddings to search memories by concept instead of exact keywords",
+      value: cfg.semanticRecall ?? false,
+    },
+    {
+      key: "embeddingModel",
+      type: "enum",
+      label: "Embedding model",
+      description:
+        "Local HF model used for semantic search (requires semantic recall to be enabled)",
+      value: cfg.embeddingModel ?? "Xenova/bge-small-en-v1.5",
+      options: [
+        "Xenova/bge-small-en-v1.5",
+        "Xenova/all-MiniLM-L6-v2",
+        "Xenova/bge-base-en-v1.5",
+      ],
+      optionLabels: {
+        "Xenova/bge-small-en-v1.5": "bge-small-en-v1.5 (Recommended)",
+        "Xenova/all-MiniLM-L6-v2": "all-MiniLM-L6-v2 (Fastest)",
+        "Xenova/bge-base-en-v1.5": "bge-base-en-v1.5 (High Quality)",
+      },
+    },
+    {
+      key: "model",
+      type: "model",
+      label: "Base model override",
+      description: "Override model for all memory workers",
+      value: {
+        id: cfg.model ? `${cfg.model.provider}/${cfg.model.id}` : "",
+        thinking: cfg.model?.thinking,
+      },
+      default: { id: "" },
+    },
+    {
+      key: "observerModel",
+      type: "model",
+      label: "Observer model",
+      description: "Specific model for the observer worker",
+      value: {
+        id: cfg.observerModel
+          ? `${cfg.observerModel.provider}/${cfg.observerModel.id}`
+          : "",
+        thinking: cfg.observerModel?.thinking,
+      },
+      default: { id: "" },
+    },
+    {
+      key: "reflectorModel",
+      type: "model",
+      label: "Reflector model",
+      description: "Specific model for the reflector worker",
+      value: {
+        id: cfg.reflectorModel
+          ? `${cfg.reflectorModel.provider}/${cfg.reflectorModel.id}`
+          : "",
+        thinking: cfg.reflectorModel?.thinking,
+      },
+      default: { id: "" },
+    },
+    {
+      key: "dropperModel",
+      type: "model",
+      label: "Dropper model",
+      description: "Specific model for the dropper worker",
+      value: {
+        id: cfg.dropperModel
+          ? `${cfg.dropperModel.provider}/${cfg.dropperModel.id}`
+          : "",
+        thinking: cfg.dropperModel?.thinking,
+      },
+      default: { id: "" },
+    },
+    {
       key: "sessionFallback",
       type: "boolean",
       label: "Session model fallback",
@@ -411,6 +487,27 @@ export const config = new ConfigManager<UnifiedConfig>({
         merged.observationsPoolMaxTokens / 2,
       );
     }
+
+    // Coerce ModelField values (from UI `{ id: "provider/id" }`) back to OmModelConfig
+    const coerceModel = (key: keyof UnifiedConfig) => {
+      const mergedAny = merged as any;
+      const v = mergedAny[key];
+      if (
+        v &&
+        typeof v === "object" &&
+        typeof v.id === "string" &&
+        v.id.includes("/")
+      ) {
+        const [provider, id] = v.id.split("/");
+        mergedAny[key] = { ...v, provider, id };
+      } else if (v && typeof v === "object" && v.id === "") {
+        delete mergedAny[key]; // Empty string means "clear override"
+      }
+    };
+    coerceModel("model");
+    coerceModel("observerModel");
+    coerceModel("reflectorModel");
+    coerceModel("dropperModel");
 
     return merged;
   },
