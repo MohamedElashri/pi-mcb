@@ -1,4 +1,7 @@
-.PHONY: build lint format format-check test test-watch check bump bump-minor bump-major release-check prepack
+.PHONY: build lint format format-check test test-watch check bump bump-minor bump-major release-check prepack help
+
+# Default target
+.DEFAULT_GOAL := help
 
 # Build the project using tsup
 build:
@@ -47,3 +50,19 @@ release-check:
 # Run a full prepack pipeline (check, test, and build)
 prepack:
 	pnpm prepack
+
+# Help menu
+help:
+	@echo "Available commands:"
+	@echo "  build         - Build the project using tsup"
+	@echo "  lint          - Run eslint"
+	@echo "  format        - Format code with prettier"
+	@echo "  format-check  - Check formatting with prettier"
+	@echo "  test          - Run tests using vitest"
+	@echo "  test-watch    - Run tests in watch mode"
+	@echo "  check         - Run typecheck and lint"
+	@echo "  bump          - Bump patch version"
+	@echo "  bump-minor    - Bump minor version"
+	@echo "  bump-major    - Bump major version"
+	@echo "  release-check - Check the release by packing a dry-run"
+	@echo "  prepack       - Run a full prepack pipeline (check, test, and build)"
