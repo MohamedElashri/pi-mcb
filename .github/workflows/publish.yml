@@ -1,16 +1,16 @@
-name: Publish npm package
+name: CI
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
+  pull_request:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
-  publish:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,12 +23,7 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # sanad: ref=v7.0.0
         with:
           node-version: "24"
-          registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
-
-      # Trusted publishing requires npm >= 11.5.1.
-      - name: Update npm
-        run: npm install --global npm@11
 
       - name: Show tool versions
         run: |
@@ -38,17 +33,3 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Verify tag matches package version
-        shell: bash
-        run: |
-          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
-          TAG_VERSION="${GITHUB_REF_NAME#v}"
-
-          if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
-            echo "Tag version $TAG_VERSION does not match package.json version $PACKAGE_VERSION"
-            exit 1
-          fi
-
-      - name: Publish
-        run: npm publish
