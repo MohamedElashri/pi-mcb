@@ -1,4 +1,4 @@
-.PHONY: build lint format format-check test test-watch check bump bump-minor bump-major release-check prepack help
+.PHONY: build lint format format-check test test-watch check update bump bump-minor bump-major release-check prepack help
 
 # Default target
 .DEFAULT_GOAL := help
@@ -31,6 +31,12 @@ test-watch:
 check:
 	pnpm check
 
+# Update dependencies within semver ranges, then verify everything still passes
+update:
+	pnpm update
+	pnpm check
+	pnpm test
+
 # Bump patch version
 bump:
 	pnpm version patch
@@ -61,6 +67,7 @@ help:
 	@echo "  test          - Run tests using vitest"
 	@echo "  test-watch    - Run tests in watch mode"
 	@echo "  check         - Run typecheck and lint"
+	@echo "  update        - Update dependencies within semver ranges, then verify"
 	@echo "  bump          - Bump patch version"
 	@echo "  bump-minor    - Bump minor version"
 	@echo "  bump-major    - Bump major version"
