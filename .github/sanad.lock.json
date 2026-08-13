@@ -4,6 +4,41 @@
   "entries": [
     {
       "file": ".github/workflows/publish.yml",
+      "node": "jobs.ci.steps[0].uses",
+      "owner": "actions",
+      "repo": "checkout",
+      "path": "",
+      "kind": "github-action",
+      "logical_ref": "v7.0.1",
+      "pinned_sha": "3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "resolved_at": "2026-08-13T08:25:43Z"
+    },
+    {
+      "file": ".github/workflows/publish.yml",
+      "node": "jobs.ci.steps[1].uses",
+      "owner": "pnpm",
+      "repo": "action-setup",
+      "path": "",
+      "kind": "github-action",
+      "logical_ref": "v6.0.10",
+      "pinned_sha": "0977fd99725f1db4007ccb2928dbb4e90d06cc86",
+      "resolved_at": "2026-08-13T08:25:43Z",
+      "timestamp": "2026-08-03T12:06:25Z",
+      "timestamp_source": "release"
+    },
+    {
+      "file": ".github/workflows/publish.yml",
+      "node": "jobs.ci.steps[2].uses",
+      "owner": "actions",
+      "repo": "setup-node",
+      "path": "",
+      "kind": "github-action",
+      "logical_ref": "v7.0.0",
+      "pinned_sha": "820762786026740c76f36085b0efc47a31fe5020",
+      "resolved_at": "2026-08-13T08:25:43Z"
+    },
+    {
+      "file": ".github/workflows/publish.yml",
       "node": "jobs.publish.steps[0].uses",
       "owner": "actions",
       "repo": "checkout",
