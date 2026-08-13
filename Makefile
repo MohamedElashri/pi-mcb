@@ -31,9 +31,10 @@ test-watch:
 check:
 	pnpm check
 
-# Update dependencies within semver ranges, then verify everything still passes
+# Update dependencies to the latest versions, then verify everything still passes
 update:
-	pnpm update
+	pnpm update --latest
+	pnpm add -D typescript@~6.0.3
 	pnpm check
 	pnpm test
 
@@ -67,7 +68,7 @@ help:
 	@echo "  test          - Run tests using vitest"
 	@echo "  test-watch    - Run tests in watch mode"
 	@echo "  check         - Run typecheck and lint"
-	@echo "  update        - Update dependencies within semver ranges, then verify"
+	@echo "  update        - Update dependencies to the latest versions, then verify"
 	@echo "  bump          - Bump patch version"
 	@echo "  bump-minor    - Bump minor version"
 	@echo "  bump-major    - Bump major version"
