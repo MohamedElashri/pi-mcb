@@ -1,6 +1,6 @@
 {
   "name": "pi-mcb",
-  "version": "0.2.1",
+  "version": "0.2.2"
   "packageManager": "pnpm@11.2.2",
   "description": "Unified compaction + observational memory extension for Pi — compresses conversation context while preserving durable observations and reflections",
   "license": "MIT",
@@ -60,18 +60,18 @@
     ]
   },
   "devDependencies": {
-    "@earendil-works/pi-agent-core": "^0.85.1",
-    "@earendil-works/pi-ai": "^0.85.1",
-    "@earendil-works/pi-coding-agent": "^0.85.1",
-    "@earendil-works/pi-tui": "^0.85.1",
-    "@huggingface/transformers": "^4.2.0",
-    "@typescript-eslint/eslint-plugin": "8.69.0",
-    "@typescript-eslint/parser": "8.69.0",
-    "eslint": "10.10.0",
-    "prettier": "3.9.6",
+    "@earendil-works/pi-agent-core": "^0.87.1",
+    "@earendil-works/pi-ai": "^0.87.1",
+    "@earendil-works/pi-coding-agent": "^0.87.1",
+    "@earendil-works/pi-tui": "^0.87.1",
+    "@huggingface/transformers": "^4.3.0",
+    "@typescript-eslint/eslint-plugin": "8.70.1",
+    "@typescript-eslint/parser": "8.70.1",
+    "eslint": "10.11.0",
+    "prettier": "3.9.9",
     "tsup": "^8.5.1",
     "typescript": "6.0.3",
-    "vitest": "5.0.0"
+    "vitest": "5.0.1"
   },
   "peerDependenciesMeta": {
     "@huggingface/transformers": {

@@ -372,8 +372,9 @@ export async function runDropper(
     },
   ];
   const context: AgentContext = {
-    systemPrompt: DROPPER_SYSTEM,
-    messages: [],
+    messages: [
+      { role: "system", content: DROPPER_SYSTEM, timestamp: Date.now() },
+    ],
     tools: [dropObservations as AgentTool<any>],
   };
   const reasoning = (model as { reasoning?: unknown }).reasoning;

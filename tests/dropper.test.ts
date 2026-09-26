@@ -94,7 +94,8 @@ describe("V3 dropper agent", () => {
   it("keeps core dropper safety guidance in V3 terms", async () => {
     let systemPrompt = "";
     const loop = fakeAgentLoop((_prompts, context) => {
-      systemPrompt = context.systemPrompt;
+      systemPrompt =
+        context.messages[0]?.role === "system" ? context.messages[0].content : "";
     });
 
     await runDropper({ ...baseArgs, agentLoop: loop });

@@ -189,8 +189,9 @@ export async function runReflector(
     },
   ];
   const context: AgentContext = {
-    systemPrompt: REFLECTOR_SYSTEM,
-    messages: [],
+    messages: [
+      { role: "system", content: REFLECTOR_SYSTEM, timestamp: Date.now() },
+    ],
     tools: [recordReflections as AgentTool<any>],
   };
   const reasoning = (model as { reasoning?: unknown }).reasoning;
